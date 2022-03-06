@@ -1,0 +1,8 @@
+**/cmake_install.cmake
+**/.cache
+build/
+**/CMakeCache.txt
+**/Makefile
+**/CMakeFiles
+**/compile_commands.json
+**/CTestTestfile.cmake
