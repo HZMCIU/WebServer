@@ -1,6 +1,8 @@
 #include "base/Logging.h"
 #include "base/Thread.h"
 
+#include <unistd.h>
+
 #include <iostream>
 #include <string>
 

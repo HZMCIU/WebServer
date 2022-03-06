@@ -75,7 +75,6 @@ void AsyncLogging::append(const char *logline, size_t len)
 void AsyncLogging::threadFunc()
 {
     assert(running_ == true);
-    latch_.countDown();
     LogFile output(basename_);
     BufferPtr newBuffer1(new Buffer);
     BufferPtr newBuffer2(new Buffer);
@@ -85,6 +84,13 @@ void AsyncLogging::threadFunc()
     BufferVector buffersToWrite;
     buffersToWrite.reserve(16);
     while (running_) {
+        /**
+         * @important short message loss
+         * if log message is too short, then those messages will not be flushed into disk. This is happened when the `threadFunc` thread is preempted after `countDown` is runned.
+         * When `threadFunc` reoccupied CPU, logging is done. There is no chance for `threadFunc` enter into while loop, where flush buffer into disk, so message get lost.
+         * So thread is not considered successfully started util enter into this while loop.
+         */
+        latch_.countDown();
         assert(newBuffer1 && newBuffer1->length() == 0);
         assert(newBuffer2 && newBuffer2->length() == 0);
         assert(buffersToWrite.empty());
@@ -108,7 +114,7 @@ void AsyncLogging::threadFunc()
             buffersToWrite.erase(buffersToWrite.begin() + 2, buffersToWrite.end());
         }
 
-        for(size_t i = 0; buffersToWrite.size(); i++) {
+        for(size_t i = 0; i < buffersToWrite.size(); i++) {
             output.append(buffersToWrite[i]->data(), buffersToWrite[i]->length());
         }
 

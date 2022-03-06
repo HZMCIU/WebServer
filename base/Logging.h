@@ -5,6 +5,7 @@
 
 #include "base/LogStream.h"
 
+class AsyncLogging;
 class Logger {
 public:
     Logger(const char* fileName, int line);

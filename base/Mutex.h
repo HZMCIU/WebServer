@@ -13,6 +13,7 @@ public:
     }
     ~MutexLock()
     {
+        pthread_mutex_lock(&mutex_);
         pthread_mutex_destroy(&mutex_);
     }
     void lock()
@@ -31,6 +32,8 @@ public:
 
 private:
     pthread_mutex_t mutex_;
+private:
+    friend class Condition;
 };
 
 

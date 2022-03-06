@@ -13,7 +13,7 @@
 
 class AsyncLogging: noncopyable {
 public:
-    using Buffer = FixedBuffer<kSmallBuffer>;
+    using Buffer = FixedBuffer<kLargeBuffer>;
     using BufferPtr = std::shared_ptr<Buffer>;
     using BufferVector = std::vector<BufferPtr>;
 

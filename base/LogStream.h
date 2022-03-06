@@ -14,6 +14,7 @@ template<int SIZE>
 class FixedBuffer: noncopyable {
 public:
     FixedBuffer(): cur_(data_) {}
+    ~FixedBuffer() {}
     int avail()
     {
         return end() - cur_;
