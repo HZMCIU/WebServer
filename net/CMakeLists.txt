@@ -3,7 +3,8 @@ set(net_SRCS
     EventLoop.cc
     Poller.cc
     poller/DefaultPoller.cc
-    poller/EPollPoller.cc)
+    poller/EPollPoller.cc
+    EventLoopThread.cc)
 
 add_subdirectory(tests)
 add_library(net ${net_SRCS})

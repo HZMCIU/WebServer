@@ -25,7 +25,7 @@ int createEventFd()
     return fd;
 }
 
-const int EventLoop::kPollTimeout = 10000;
+const int EventLoop::kPollTimeout = 1000;
 
 EventLoop::EventLoop():
     quit_(false),
@@ -113,7 +113,7 @@ void EventLoop::doPendingFunctors()
         MutexLockGuard lock(mutex_);
         functors.swap(pendingFunctors_);
     }
-    for(const Functor& cb : pendingFunctors_) {
+    for(const Functor& cb : functors) {
         cb();
     }
     callingPendingFunctor_ = false;
