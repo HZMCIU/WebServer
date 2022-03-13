@@ -4,7 +4,9 @@ set(net_SRCS
     Poller.cc
     poller/DefaultPoller.cc
     poller/EPollPoller.cc
-    EventLoopThread.cc)
+    EventLoopThread.cc
+    EventLoopThreadPool.cc)
+
 
 add_subdirectory(tests)
 add_library(net ${net_SRCS})
