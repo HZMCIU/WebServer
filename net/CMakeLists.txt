@@ -5,7 +5,10 @@ set(net_SRCS
     poller/DefaultPoller.cc
     poller/EPollPoller.cc
     EventLoopThread.cc
-    EventLoopThreadPool.cc)
+    EventLoopThreadPool.cc
+    SocketOps.cc
+    TcpServer.cc)
+
 
 
 add_subdirectory(tests)
