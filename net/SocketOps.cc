@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #include "base/Logging.h"
 #include "net/Endian.h"
@@ -66,4 +67,15 @@ int sockets::accept(int sockfd, struct sockaddr_in *addr)
     }
     setNonBlockAndCloseOnExec(connfd);
     return connfd;
+}
+
+
+ssize_t sockets::read(int sockfd, void *buf, size_t count)
+{
+    return ::read(sockfd, buf, count);
+}
+
+ssize_t sockets::readv(int sockfd, const struct iovec *iov, int iovcnt)
+{
+    return ::readv(sockfd, iov, iovcnt);
 }
