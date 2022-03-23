@@ -1,6 +1,8 @@
 #include "net/SocketOps.h"
 
+#include <arpa/inet.h>
 #include <cstdint>
+#include <cstdio>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
@@ -78,4 +80,22 @@ ssize_t sockets::read(int sockfd, void *buf, size_t count)
 ssize_t sockets::readv(int sockfd, const struct iovec *iov, int iovcnt)
 {
     return ::readv(sockfd, iov, iovcnt);
+}
+
+ssize_t sockets::write(int sockfd, const void *buf, size_t count)
+{
+    return ::write(sockfd, buf, count);
+}
+
+void sockets::toIpPort(struct sockaddr_in *addr, char *buf, size_t size)
+{
+    uint16_t port = networkToHost16(addr->sin_port);
+    ::inet_ntop(AF_INET, &addr->sin_addr, buf, static_cast<socklen_t>(size));
+    int len = strlen(buf);
+    snprintf(buf + len, size - len, ":%u", port);
+}
+
+void sockets::shutdownWrite(int sockfd)
+{
+    ::shutdown(sockfd, SHUT_WR);
 }

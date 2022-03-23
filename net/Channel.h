@@ -82,6 +82,10 @@ public:
     {
         return events_ == kNoneEvent;
     }
+    bool isWriting()
+    {
+        return events_ == kWriteEvent;
+    }
     void remove();
 
 private:

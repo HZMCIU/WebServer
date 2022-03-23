@@ -28,11 +28,11 @@ public:
     void loop();
     void quit();
 
-    void runInThread(Functor cb);
-    void queueInThread(Functor cb);
+    void runInLoop(Functor cb);
+    void queueInLoop(Functor cb);
 
-private:
     bool isInLoopThread();
+private:
     void doPendingFunctors();
     void wakeup();
     void handleRead();

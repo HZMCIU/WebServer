@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     {
         EventLoopThread thread_(nullptr, "eventLoopThread");
         loop = thread_.startEventLoop();
-        loop->runInThread([]() {
+        loop->runInLoop([]() {
             cout << "Hello World" << endl;
         });
         ::sleep(3);

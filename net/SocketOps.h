@@ -17,7 +17,10 @@ void setIpPortDomain(struct sockaddr_in * addr, uint16_t port);
 int accept(int sockfd, struct sockaddr_in * addr);
 ssize_t read(int sockfd, void* buf, size_t count);
 ssize_t readv(int sockfd, const struct iovec* iov, int iovcnt);
+ssize_t write(int sockfd, const void* buf, size_t count);
 int close(int sockfd);
+void toIpPort(struct sockaddr_in *addr, char* buf, size_t);
+void shutdownWrite(int sockfd);
 }
 
 #endif

@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <stddef.h>
+#include <assert.h>
 
 #include <vector>
 #include <string>
@@ -70,6 +71,11 @@ public:
         }
     }
 
+    void hasWritten(size_t len)
+    {
+        assert(len <= writableBytes());
+        writerIndex_ += len;
+    }
     char* peek()
     {
         return begin() + readerIndex_;

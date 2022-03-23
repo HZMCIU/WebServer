@@ -7,7 +7,9 @@ set(net_SRCS
     EventLoopThread.cc
     EventLoopThreadPool.cc
     SocketOps.cc
-    TcpServer.cc)
+    TcpServer.cc
+    TcpConnection.cc
+    Buffer.cc)
 
 
 

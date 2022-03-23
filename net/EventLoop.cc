@@ -88,17 +88,17 @@ void EventLoop::loop()
     }
 }
 
-void EventLoop::runInThread(Functor cb)
+void EventLoop::runInLoop(Functor cb)
 {
     if (isInLoopThread()) {
         cb();
     }
     else {
-        queueInThread(cb);
+        queueInLoop(cb);
     }
 }
 
-void EventLoop::queueInThread(Functor cb)
+void EventLoop::queueInLoop(Functor cb)
 {
     MutexLockGuard lock(mutex_);
     pendingFunctors_.push_back(move(cb));
