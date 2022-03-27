@@ -43,7 +43,7 @@ public:
     {
         path_.assign(start, end);
     }
-    const std::string& getPath()
+    const std::string& getPath() const
     {
         return path_;
     }
@@ -78,7 +78,16 @@ public:
         }
         return std::string();
     }
-    const std::map<std::string, std::string>& getHeaders()
+    void addQuery(const char* start, const char* end);
+    std::string getQuery(std::string& field) 
+    {
+        return queries_[field];
+    }
+    const std::map<std::string, std::string>& getQueries() const
+    {
+        return queries_;
+    }
+    const std::map<std::string, std::string>& getHeaders() const
     {
         return headers_;
     }
@@ -95,5 +104,6 @@ private:
     std::string path_;
     Version version_;
     std::map<std::string, std::string> headers_;
+    std::map<std::string, std::string> queries_;
 };
 #endif

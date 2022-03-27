@@ -3,6 +3,8 @@
 #include <cstdio>
 #include <functional>
 
+#include <iostream>
+
 #include "base/Logging.h"
 #include "net/Channel.h"
 #include "net/EventLoop.h"
@@ -46,6 +48,7 @@ TcpConnection::TcpConnection(EventLoop* loop,
 TcpConnection::~TcpConnection()
 {
     assert(state_ == kDisconnected);
+    cout << "TcpConnection::dtor[" << name_ << "] at fd=" << channel_->fd() << endl;
     sockets::close(channel_->fd());
 }
 void TcpConnection::send(void* data, size_t len)

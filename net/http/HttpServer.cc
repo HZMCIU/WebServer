@@ -22,7 +22,8 @@ using placeholders::_2;
 void defaultHttpCallback(const HttpRequest& req, HttpResponse& resp)
 {
     resp.setStatusCode(HttpResponse::k404);
-    resp.setStatusMessage("Not Found");
+    resp.setStatusMessage("NOT FOUND");
+    resp.setBody("<h1>404 NOT FOUND</h1>");
 }
 
 HttpServer::HttpServer(EventLoop* loop, string name, uint16_t port)
@@ -52,27 +53,21 @@ void HttpServer::onConnection(const TcpConnectionPtr& ptr)
 void HttpServer::onMessage(const TcpConnectionPtr& ptr, Buffer* buf)
 {
     HttpContext* context = ptr->getMutableContext();
-    if (context->parseHttpRequest(buf)) {
+    if (context->parseHttpRequest(buf) && context->gotAll()) {
         HttpRequest request = context->getRequest();
-        HttpResponse response;
-        onRequest(request, response);
-        Buffer buf;
-        response.appendToBuffer(&buf);
-        // DEBUG
-        printf("%s\n", buf.retrieveAsString(buf.readableBytes()).c_str());
-        ptr->send((void*)buf.peek(), buf.readableBytes());
+        onRequest(ptr, request);
+        context->reset();
     }
     else {
         LOG << "HttpServer::onMessage";
     }
 }
 
-void HttpServer::onRequest(const HttpRequest& req, HttpResponse& resp)
+void HttpServer::onRequest(const TcpConnectionPtr& ptr, const HttpRequest& req)
 {
-    resp.setStatusCode(HttpResponse::k200);
-    resp.setStatusMessage("OK");
-    string body = "<h1>Hello World</h1>";
-    resp.setHeader("Content-Type", "text/html");
-    resp.setHeader("Content-Length", to_string(body.size()));
-    resp.setBody("<h1>Hello World</h1>");
+    HttpResponse resp;
+    Buffer buf;
+    httpCallback_(req, resp);
+    resp.appendToBuffer(&buf);
+    ptr->send((void*)buf.peek(), buf.readableBytes());
 }

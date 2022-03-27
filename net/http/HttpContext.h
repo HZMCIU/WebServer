@@ -36,6 +36,7 @@ public:
     }
 private:
     bool parseRequestLine(const char* start, const char* end);
+    bool parseQuery(const char* start, const char* end);
     HttpRequestParseState state_;
     HttpRequest request_;
 };

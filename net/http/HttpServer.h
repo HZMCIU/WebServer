@@ -20,11 +20,15 @@ public:
     HttpServer(EventLoop* loop, std::string name = "HttpServer", uint16_t port = 80);
     void start();
     void setThreadNum(int num);
+    void setHttpCallback(const HttpCallback& cb)
+    {
+        httpCallback_ = cb;
+    }
 
 private:
     void onMessage(const TcpConnectionPtr& ptr, Buffer* buf);
     void onConnection(const TcpConnectionPtr& ptr);
-    void onRequest(const HttpRequest& req, HttpResponse& resp);
+    void onRequest(const TcpConnectionPtr& ptr, const HttpRequest& req);
     TcpServer server_;
     int threadNum_;
     HttpCallback httpCallback_;

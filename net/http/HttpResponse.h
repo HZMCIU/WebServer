@@ -31,6 +31,7 @@ public:
     }
     void setBody(std::string& body)
     {
+        setHeader("Content-Length", std::to_string(body.size()));
         body_ = body;
     }
     void setBody(std::string&& body)

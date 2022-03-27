@@ -1,5 +1,6 @@
 set(http_SRCS
     HttpResponse.cc
+    HttpRequest.cc
     HttpServer.cc
     HttpContext.cc)
 add_library(http ${http_SRCS})
