@@ -10,6 +10,7 @@
 #include "net/EventLoop.h"
 #include "net/Callbacks.h"
 #include "net/Buffer.h"
+#include "net/http/HttpContext.h"
 
 class TcpConnection: noncopyable,
     public std::enable_shared_from_this<TcpConnection> {
@@ -63,6 +64,19 @@ public:
     {
         return state_ == kConnected;
     }
+
+    HttpContext* getMutableContext()
+    {
+        return  &context_;
+    }
+    Buffer* outputBuffer()
+    {
+        return &outputBuffer_;
+    }
+    Buffer* inputBuffer()
+    {
+        return &inputBuffer_;
+    }
 private:
     enum StateE {kDisconnected, kConnecting, kConnected, kDisconnecting};
 
@@ -93,5 +107,7 @@ private:
 
     Buffer inputBuffer_;
     Buffer outputBuffer_;
+
+    HttpContext context_;
 };
 #endif

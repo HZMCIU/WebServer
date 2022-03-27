@@ -18,12 +18,20 @@ class Channel;
 class TcpServer : noncopyable {
 public:
     TcpServer(EventLoop* loop,
-        int threadNum,
-        uint16_t port = 80,
-        const std::string& name = "TcpServer");
+              uint16_t port = 80,
+              const std::string& name = "TcpServer");
     ~TcpServer();
     void start();
 
+    void setConnectionCallback(const ConnectionCallback& cb)
+    {
+        connectionCallback_ = cb;
+    }
+    void setMessageCallback(const MessageCallback& cb)
+    {
+        messageCallback_ = cb;
+    }
+    void setThreadNum(int num);
 private:
     using ConnectionMap = std::map<std::string, TcpConnectionPtr>;
 

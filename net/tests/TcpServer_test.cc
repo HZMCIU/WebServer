@@ -13,7 +13,8 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     EventLoop baseloop;
-    TcpServer server(&baseloop, 3, 8080);
+    TcpServer server(&baseloop, 8080);
+    server.setThreadNum(4);
     server.start();
     baseloop.loop();
     return 0;

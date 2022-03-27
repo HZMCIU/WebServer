@@ -99,3 +99,12 @@ void sockets::shutdownWrite(int sockfd)
 {
     ::shutdown(sockfd, SHUT_WR);
 }
+
+int sockets::close(int sockfd)
+{
+    int ret = 0;
+    if ((ret =::close(sockfd)) < 0) {
+        LOG << "sockets::close";
+    }
+    return ret;
+}

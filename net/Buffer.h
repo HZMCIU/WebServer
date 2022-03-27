@@ -1,6 +1,7 @@
 #ifndef NET_BUFFER_H
 #define NET_BUFFER_H
 
+#include <algorithm>
 #include <cstdio>
 #include <stddef.h>
 #include <assert.h>
@@ -39,6 +40,15 @@ public:
         std::copy(data, data + len, beginWrite());
         writerIndex_ += len;
     }
+    void append(std::string&& str)
+    {
+        append(str);
+    }
+    void append(std::string& str)
+    {
+        append(str.c_str(), str.size());
+    }
+
     void prepend(const char* data, size_t len)
     {
         if (prependableBytes() >= len) {
@@ -70,17 +80,33 @@ public:
             return std::string(peek(), readableBytes());
         }
     }
+    void retrieveUntil(const char* end)
+    {
+        assert(end <= beginWrite());
+        assert(end >= peek());
+        retrieve(end - peek());
+    }
+
+    const char* findCRLF() const
+    {
+        const char* crlf = std::search(peek(), beginWrite() , kCRLF, kCRLF + 2);
+        return crlf == beginWrite() ? nullptr : crlf;
+    }
 
     void hasWritten(size_t len)
     {
         assert(len <= writableBytes());
         writerIndex_ += len;
     }
-    char* peek()
+    const char* peek() const
     {
         return begin() + readerIndex_;
     }
     char* beginWrite()
+    {
+        return begin() + writerIndex_;
+    }
+    const char* beginWrite() const
     {
         return begin() + writerIndex_;
     }
@@ -119,5 +145,6 @@ private:
     std::vector<char> buffer_;
     int readerIndex_;
     int writerIndex_;
+    static const char kCRLF[];
 };
 #endif

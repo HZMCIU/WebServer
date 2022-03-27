@@ -14,6 +14,6 @@ set(net_SRCS
 
 
 add_subdirectory(tests)
+add_subdirectory(http)
 add_library(net ${net_SRCS})
 target_link_libraries(net base)
-

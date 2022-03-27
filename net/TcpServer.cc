@@ -20,9 +20,8 @@
 
 using namespace std;
 
-TcpServer::TcpServer(EventLoop* loop, int threadNum, uint16_t port, const string& name)
+TcpServer::TcpServer(EventLoop* loop, uint16_t port, const string& name)
     : baseloop_(loop)
-    , threadNum_(threadNum)
     , eventLoopThreadPool_(new EventLoopThreadPool(loop, "TcpServer"))
     , started_(false)
     , listeningFd_(sockets::createNonBlockingOrDie())
@@ -30,6 +29,7 @@ TcpServer::TcpServer(EventLoop* loop, int threadNum, uint16_t port, const string
     , name_(name)
     , messageCallback_(defaultMessageCallback)
     , connectionCallback_(defaultConnectionCallback)
+    , threadNum_(1)
 {
     eventLoopThreadPool_->setThreadNum(threadNum_);
     acceptChannel_->setReadCallback(bind(&TcpServer::handleNewConnection, this));
@@ -52,6 +52,11 @@ void TcpServer::start()
     baseloop_->runInLoop(bind(&TcpServer::startListening, this));
     acceptChannel_->enableReading();
     started_ = true;
+}
+
+void TcpServer::setThreadNum(int num)
+{
+    threadNum_ = num;
 }
 
 void TcpServer::startListening()
@@ -81,7 +86,7 @@ void TcpServer::handleNewConnection()
 
     connections_[connName] = conn;
     conn->setConnectionCallback(connectionCallback_);
-    conn->setMessageCallback(defaultMessageCallback);
+    conn->setMessageCallback(messageCallback_);
     conn->setCloseCallback(bind(&TcpServer::removeConnection, this, conn));
     ioLoop->runInLoop(bind(&TcpConnection::connectEstablished, conn));
 }

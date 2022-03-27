@@ -45,7 +45,8 @@ TcpConnection::TcpConnection(EventLoop* loop,
 
 TcpConnection::~TcpConnection()
 {
-
+    assert(state_ == kDisconnected);
+    sockets::close(channel_->fd());
 }
 void TcpConnection::send(void* data, size_t len)
 {

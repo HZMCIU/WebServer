@@ -5,6 +5,8 @@
 
 #include "net/SocketOps.h"
 
+const char Buffer::kCRLF[]="\r\n";
+
 ssize_t Buffer::readFd(int fd, int *saveErrNo)
 {
     char extrabuf[65536];
