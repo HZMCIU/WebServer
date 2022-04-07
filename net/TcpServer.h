@@ -55,7 +55,7 @@ private:
     MessageCallback messageCallback_;
     ConnectionCallback connectionCallback_;
 
-    void removeConnection(TcpConnectionPtr&);
-    void removeConnectionInLoop(TcpConnectionPtr&);
+    void removeConnection(const TcpConnectionPtr&);
+    void removeConnectionInLoop(const TcpConnectionPtr&);
 };
 #endif

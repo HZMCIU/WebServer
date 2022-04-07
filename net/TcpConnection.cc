@@ -28,6 +28,7 @@ void defaultConnectionCallback(const TcpConnectionPtr& ptr)
         << local << " is "
         << (ptr->connected() ? "UP" : "DOWN");
 }
+
 TcpConnection::TcpConnection(EventLoop* loop,
                              int sockfd,
                              const struct sockaddr_in& localAddr,
@@ -48,8 +49,13 @@ TcpConnection::TcpConnection(EventLoop* loop,
 TcpConnection::~TcpConnection()
 {
     assert(state_ == kDisconnected);
-    cout << "TcpConnection::dtor[" << name_ << "] at fd=" << channel_->fd() << endl;
+    //LOG << "TcpConnection::dtor[" << name_ << "] at fd=" << channel_->fd();
+    LOG << name_;
     sockets::close(channel_->fd());
+}
+void TcpConnection::send(string&& str)
+{
+    send((void*)str.c_str(), str.size());
 }
 void TcpConnection::send(void* data, size_t len)
 {
@@ -82,10 +88,10 @@ void TcpConnection::handleClose()
     setState(kDisconnected);
     channel_->disableAll();
 
-    TcpConnectionPtr guard(shared_from_this());
+    //TcpConnectionPtr guard(shared_from_this());
 
-    connectionCallback_(guard);
-    closeCallback_(guard);
+    //connectionCallback_(guard);
+    closeCallback_(shared_from_this());
 }
 
 void TcpConnection::handleWrite()

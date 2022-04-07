@@ -20,6 +20,8 @@
 
 using namespace std;
 
+using placeholders::_1;
+
 TcpServer::TcpServer(EventLoop* loop, uint16_t port, const string& name)
     : baseloop_(loop)
     , eventLoopThreadPool_(new EventLoopThreadPool(loop, "TcpServer"))
@@ -30,6 +32,7 @@ TcpServer::TcpServer(EventLoop* loop, uint16_t port, const string& name)
     , messageCallback_(defaultMessageCallback)
     , connectionCallback_(defaultConnectionCallback)
     , threadNum_(1)
+    , nextConnId_(0)
 {
     eventLoopThreadPool_->setThreadNum(threadNum_);
     acceptChannel_->setReadCallback(bind(&TcpServer::handleNewConnection, this));
@@ -71,8 +74,9 @@ void TcpServer::handleNewConnection()
 
     char buf[60];
     sockets::toIpPort(&listeningAddr_, buf, sizeof(buf));
-    string connName = name_ + buf;
-    snprintf(buf, sizeof buf, "-%s#%d", connName.c_str(), nextConnId_);
+    string connName = name_ + "-" + buf;
+    snprintf(buf, sizeof buf, "#%d", nextConnId_);
+    connName += buf;
     nextConnId_++;
 
     memset(&peerAddr, 0, sizeof(peerAddr));
@@ -85,17 +89,18 @@ void TcpServer::handleNewConnection()
     TcpConnectionPtr conn(new TcpConnection(ioLoop, connfd, listeningAddr_, peerAddr, connName));
 
     connections_[connName] = conn;
+
     conn->setConnectionCallback(connectionCallback_);
     conn->setMessageCallback(messageCallback_);
-    conn->setCloseCallback(bind(&TcpServer::removeConnection, this, conn));
+    conn->setCloseCallback(bind(&TcpServer::removeConnection, this, placeholders::_1));
     ioLoop->runInLoop(bind(&TcpConnection::connectEstablished, conn));
 }
 
-void TcpServer::removeConnection(TcpConnectionPtr& conn)
+void TcpServer::removeConnection(const TcpConnectionPtr& conn)
 {
     baseloop_->runInLoop(bind(&TcpServer::removeConnectionInLoop, this, conn));
 }
-void TcpServer::removeConnectionInLoop(TcpConnectionPtr& conn)
+void TcpServer::removeConnectionInLoop(const TcpConnectionPtr& conn)
 {
     EventLoop* ioLoop = conn->getLoop();
     int n = connections_.erase(conn->name());

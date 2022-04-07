@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 {
     EventLoop loop;
     HttpServer server(&loop, "hxy", 8080);
-    server.setThreadNum(3);
+    server.setThreadNum(4);
     server.setHttpCallback(onRequest);
     server.start();
     loop.loop();

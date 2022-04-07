@@ -13,6 +13,7 @@
 #include "net/http/HttpRequest.h"
 #include "net/http/HttpResponse.h"
 #include "net/TcpConnection.h"
+#include "net/SocketOps.h"
 
 using namespace std;
 
@@ -47,15 +48,24 @@ void HttpServer::start()
 
 void HttpServer::onConnection(const TcpConnectionPtr& ptr)
 {
-    cout << "Http Connection is established!" << endl;
+    char local[64], peer[64];
+    sockets::toIpPort(&ptr->localAddress(), local, sizeof(local));
+    sockets::toIpPort(&ptr->peerAddress(), peer, sizeof(peer));
+
+    //cout << peer << " => "
+    //     << local << " is " << (ptr->connected() ? "UP" : "DOWN") << endl;
 }
 
-void HttpServer::onMessage(const TcpConnectionPtr& ptr, Buffer* buf)
+void HttpServer::onMessage(const TcpConnectionPtr& conn, Buffer* buf)
 {
-    HttpContext* context = ptr->getMutableContext();
-    if (context->parseHttpRequest(buf) && context->gotAll()) {
+    HttpContext* context = conn->getMutableContext();
+    if (!context->parseHttpRequest(buf)) {
+        conn->send("HTTP1.1 400 Bad Request\r\n\r\n");
+        conn->shutdown();
+    }
+    if (context->gotAll()) {
         HttpRequest request = context->getRequest();
-        onRequest(ptr, request);
+        onRequest(conn, request);
         context->reset();
     }
     else {
@@ -70,4 +80,5 @@ void HttpServer::onRequest(const TcpConnectionPtr& ptr, const HttpRequest& req)
     httpCallback_(req, resp);
     resp.appendToBuffer(&buf);
     ptr->send((void*)buf.peek(), buf.readableBytes());
+    ptr->shutdown();
 }

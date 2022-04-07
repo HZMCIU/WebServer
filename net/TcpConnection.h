@@ -26,13 +26,14 @@ public:
     {
         return loop_;
     }
-    
+
     const std::string& name()
     {
         return name_;
     }
 
     void send(void *data, size_t len);
+    void send(std::string&& str);
     void shutdown();
 
     struct sockaddr_in& localAddress()
@@ -63,6 +64,11 @@ public:
     bool connected()
     {
         return state_ == kConnected;
+    }
+
+    bool disconnected()
+    {
+        return state_ == kDisconnected;
     }
 
     HttpContext* getMutableContext()
